@@ -58,7 +58,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Decompress Hikvision PIC Files')
-optional = parser._action_groups.pop() # Edited this line
+optional = parser._action_groups.pop()
 required = parser.add_argument_group('required arguments')
 
 required.add_argument('-i', '--input', metavar="Filenames", nargs='+', required=True)
