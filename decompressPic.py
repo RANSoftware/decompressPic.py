@@ -58,63 +58,63 @@ filename = args.prefix + "-" + str(count) + ".jpg"
 file_output = output_dir.joinpath(Path(filename).name)
 
 if file_output.exists():
-    filelist = output_dir.glob(args.prefix + "-*" + ".jpg")
-    for filename in filelist:
-        number = int(str(filename.name)[len(args.prefix)+1:-4])
-        if number > count:
-            count = number
-    count += 1
-    print("\nExisting Files Found - Starting at number:" + str(count))
+  filelist = output_dir.glob(args.prefix + "-*" + ".jpg")
+  for filename in filelist:
+    number = int(str(filename.name)[len(args.prefix)+1:-4])
+    if number > count:
+      count = number
+  count += 1
+  print("\nExisting Files Found - Starting at number:" + str(count))
 
 for file_input in args.input:
 
-    if Path(file_input).is_file():
-        print ("\nDecompressing: %s" % file_input)
-    else:
-        print ("\nError: %s not found" % file_input)
+  if Path(file_input).is_file():
+    print ("\nDecompressing: %s" % file_input)
+  else:
+    print ("\nError: %s not found" % file_input)
 
-    start = 0
-    end = 0
+  start = 0
+  end = 0
 
-    with open(file_input, 'rb') as f:
-        f.seek(0, 2)
-        num_bytes = f.tell()
+  with open(file_input, 'rb') as f:
+    f.seek(0, 2)
+    num_bytes = f.tell()
 
-        print ("File Size: %.2f MB" % float(num_bytes / 1024 / 1024))
-        print()
-        i = 0
-        status = "No files written"
-        t = tqdm(total=num_bytes, unit='B', unit_scale=True, unit_divisor=1024, desc="Progress")
+    print ("File Size: %.2f MB" % float(num_bytes / 1024 / 1024))
+    print()
+    i = 0
+    status = "No files written"
+    t = tqdm(total=num_bytes, unit='B', unit_scale=True, unit_divisor=1024, desc="Progress")
 
-        mm = mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ)
+    mm = mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ)
 
-        while 1:
+    while 1:
 
-            f.seek(end)
+      f.seek(end)
 
-            t.set_description(status)
+      t.set_description(status)
 
-            start = mm.find(b'\xFF\xD8', end)
-            if start == -1:
-                break
+      start = mm.find(b'\xFF\xD8', end)
+      if start == -1:
+        break
 
-            end = mm.find(b'\xFF\xD9', start)
+      end = mm.find(b'\xFF\xD9', start)
 
-            if (picture % args.every == 0):
+      if (picture % args.every == 0):
 
-                filename = args.prefix + "-" + str(count) + ".jpg"
+        filename = args.prefix + "-" + str(count) + ".jpg"
 
-                filename_output = output_dir.joinpath(Path(filename).name)
-                file_output = open(filename_output, 'wb')
-                f.seek(start)
-                jpeg_data = f.read(end - start)
-                file_output.write(jpeg_data)
-                file_output.close()
-                status = "File " + filename + " written"
-                count += 1
-            picture += 1
-            t.update(end - start)
+        filename_output = output_dir.joinpath(Path(filename).name)
+        file_output = open(filename_output, 'wb')
+        f.seek(start)
+        jpeg_data = f.read(end - start)
+        file_output.write(jpeg_data)
+        file_output.close()
+        status = "File " + filename + " written"
+        count += 1
+      picture += 1
+      t.update(end - start)
 
-    t.update(num_bytes - t.n)
-    t.close()
-    f.closed
+  t.update(num_bytes - t.n)
+  t.close()
+  f.closed
