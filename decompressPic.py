@@ -113,7 +113,7 @@ for file_input in args.input:
     status = "No files written"
     t = tqdm(total=num_bytes, unit='B', unit_scale=True, unit_divisor=1024, desc="Progress")
 
-    mm = mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ)
+    mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
 
     while 1:
 
