@@ -1,4 +1,4 @@
-The purpose of this script is to retreive the JPEG images embedded in a PIC file created by a Hikvision CCTV.
+The purpose of this script is to retrieve the JPEG images embedded in a PIC file created by a Hikvision CCTV.
 
 Usage:
 Required flags:
